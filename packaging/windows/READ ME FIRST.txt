@@ -1,0 +1,109 @@
+IDENTIFYCOLLECTION @VERSION@
+============================================================
+
+A tool that helps a museum's visitors and community identify
+the people in unidentified photographs, with every answer
+approved by the collections manager before it joins the record.
+
+This is an early TEST BUILD. It proves that IdentifyCollection
+can start on a Windows computer with a double-click. It cannot
+import or identify anything yet.
+
+
+TO START
+------------------------------------------------------------
+1. If you are reading this inside the zip file, stop here and
+   extract it first: close this, right-click the zip file,
+   choose "Extract All...", and open the folder that creates.
+   Somewhere on this computer, such as Documents or the
+   Desktop, or a USB stick, is fine. A network drive is not.
+
+2. Double-click "Start IdentifyCollection".
+   (Windows may show its name as "Start IdentifyCollection.bat".)
+
+3. A black window opens with some text, and then your web
+   browser opens on IdentifyCollection. The first start takes
+   longer than later ones.
+
+4. The first time, you are asked to create the first staff
+   account. Choose a user name and a password and write them
+   down: there is no "forgot my password" button yet.
+
+
+IF WINDOWS SHOWS A WARNING
+------------------------------------------------------------
+Windows is cautious about programs that arrive from the
+internet. If a blue box says "Windows protected your PC":
+click "More info", then "Run anyway".
+
+If a box asks "Do you want to run this file?": click "Run".
+
+You can avoid both next time: BEFORE extracting, right-click
+the zip file, choose Properties, tick "Unblock" at the bottom,
+click OK, and then extract.
+
+If Windows refuses outright with no "Run anyway" choice, please
+tell whoever gave you this copy. That is exactly the kind of
+thing this test build exists to find out.
+
+
+TO STOP
+------------------------------------------------------------
+Close the black window. That is all.
+Keep the black window open for as long as you are working.
+
+
+IS THIS ON THE INTERNET?
+------------------------------------------------------------
+No. IdentifyCollection runs entirely on this computer. Only
+this computer can open it; nothing is sent anywhere, and it
+works with no internet connection.
+
+
+WHERE YOUR WORK IS KEPT
+------------------------------------------------------------
+Everything is kept in the folder named "data", which appears
+next to this file the first time you start.
+
+To make a backup: close IdentifyCollection, then copy the
+whole "data" folder somewhere safe.
+
+To move to another computer: close IdentifyCollection, then
+move this whole folder.
+
+
+TO UPDATE TO A NEWER VERSION
+------------------------------------------------------------
+1. Close IdentifyCollection.
+2. Extract the new zip file to a new folder.
+3. Move your "data" folder from the old folder into the new one.
+4. Start the new one. It makes a safety copy of your database
+   (in data\backups) before it changes anything.
+Keep the old folder until you have seen the new one working.
+
+
+IF SOMETHING GOES WRONG
+------------------------------------------------------------
+The black window explains what happened in plain words. The
+technical details are saved in these files, which you can send
+to whoever looks after this copy for you:
+
+    data\logs\identifycollection.log
+    data\logs\launcher-crash.txt   (only if it could not start)
+
+
+WHAT IT NEEDS
+------------------------------------------------------------
+Windows 10 or Windows 11 (64-bit). Nothing has to be installed
+and nothing is changed on this computer outside this folder.
+
+
+LICENCE AND SOURCE CODE
+------------------------------------------------------------
+IdentifyCollection is free, open-source software under the GNU
+Affero General Public License, version 3 (see LICENSE.txt).
+The other software included in this folder is listed, with its
+licences, in THIRD-PARTY-NOTICES.txt.
+
+Source code:
+https://github.com/MorrowHomeNetwork/identifycollection

@@ -1,0 +1,17 @@
+# Line endings.
+#
+# Text files use Unix line endings (LF) on every computer, so that the zip
+# comes out the same whether it is built on Windows, Linux or a Mac.
+# The exceptions are files that Windows itself opens: batch files and the
+# plain-text read-me need Windows line endings (CRLF) or they misbehave.
+* text=auto eol=lf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+packaging/windows/*.txt text eol=crlf
+
+# Binary files: never touch.
+*.woff2 binary
+*.png   binary
+*.jpg   binary
+*.ico   binary
+*.zip   binary

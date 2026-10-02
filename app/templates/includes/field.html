@@ -1,0 +1,13 @@
+{# One form field: label, optional help, the input itself, and any errors. #}
+<div class="field{% if field.errors %} field-invalid{% endif %}">
+  <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+  {% if field.help_text %}
+  <div class="field-help" id="{{ field.auto_id }}_helptext">{{ field.help_text|safe }}</div>
+  {% endif %}
+  {{ field }}
+  {% if field.errors %}
+  <ul class="field-errors" id="{{ field.auto_id }}_error">
+    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+</div>

@@ -1,0 +1,75 @@
+{# Illustration only: an old group portrait with one person marked. No real record is shown. #}
+<figure class="print">
+  <svg class="print-image" viewBox="0 0 480 340" role="img"
+       aria-label="Illustration: an old studio photograph of five people. One of them is outlined with a yellow box labelled “Who is this?”">
+    <defs>
+      <linearGradient id="backdrop" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#bcc3c8"/>
+        <stop offset="1" stop-color="#8d969c"/>
+      </linearGradient>
+      <radialGradient id="vignette" cx="0.5" cy="0.45" r="0.75">
+        <stop offset="0.55" stop-color="#1c2328" stop-opacity="0"/>
+        <stop offset="1" stop-color="#1c2328" stop-opacity="0.42"/>
+      </radialGradient>
+    </defs>
+
+    <rect width="480" height="340" fill="url(#backdrop)"/>
+    <rect y="286" width="480" height="54" fill="#757e85"/>
+
+    <!-- back row, standing -->
+    <g>
+      <path d="M62 340V194q0-40 34-46h28q34 6 34 46v146z" fill="#454d53"/>
+      <ellipse cx="110" cy="112" rx="24" ry="29" fill="#d9dee1"/>
+      <path d="M78 96h64v9H78z" fill="#30373c"/>
+      <path d="M90 62h40v36H90z" fill="#30373c"/>
+    </g>
+    <g>
+      <path d="M192 340V190q0-38 34-44h28q34 6 34 44v150z" fill="#59626a"/>
+      <ellipse cx="240" cy="108" rx="24" ry="29" fill="#e1e5e8"/>
+      <path d="M216 104q0-34 24-34t24 34q-10-16-24-16t-24 16z" fill="#3a4147"/>
+    </g>
+    <g>
+      <path d="M324 340V194q0-40 34-46h28q34 6 34 46v146z" fill="#3b4349"/>
+      <ellipse cx="372" cy="112" rx="24" ry="29" fill="#dde1e4"/>
+      <path d="M347 110q-3-40 25-40t25 40q-6-20-25-20t-25 20z" fill="#2c3338"/>
+    </g>
+
+    <!-- front row, seated -->
+    <g>
+      <path d="M112 340v-66q0-36 36-42h44q36 6 36 42v66z" fill="#c9cfd3"/>
+      <ellipse cx="170" cy="196" rx="25" ry="29" fill="#e6e9eb"/>
+      <path d="M144 196q-4-44 26-44t26 44q-4-22-26-22t-26 22z" fill="#4a5258"/>
+    </g>
+    <g>
+      <path d="M242 340v-66q0-36 36-42h44q36 6 36 42v66z" fill="#aeb6bb"/>
+      <ellipse cx="300" cy="196" rx="25" ry="29" fill="#dfe3e6"/>
+      <path d="M274 194q-2-42 26-42t26 42q-6-20-26-20t-26 20z" fill="#353c42"/>
+    </g>
+
+    <rect width="480" height="340" fill="url(#vignette)"/>
+
+    <!-- the marking box: the one gesture this whole project is built around -->
+    <g class="marking">
+      <rect class="marking-shadow" x="330" y="64" width="84" height="136" fill="none" stroke="#0a2740" stroke-opacity="0.55" stroke-width="8"/>
+      <rect class="marking-box" x="330" y="64" width="84" height="136" fill="none" stroke="#ffc83d" stroke-width="4" pathLength="100"/>
+      <g class="marking-detail">
+        <g fill="#ffffff" stroke="#0a2740" stroke-width="2">
+          <rect x="324" y="58" width="12" height="12"/>
+          <rect x="408" y="58" width="12" height="12"/>
+          <rect x="324" y="194" width="12" height="12"/>
+          <rect x="408" y="194" width="12" height="12"/>
+        </g>
+        <rect x="330" y="22" width="126" height="30" fill="#ffc83d"/>
+        <text x="342" y="43" class="marking-tag">Who is this?</text>
+      </g>
+    </g>
+  </svg>
+  <figcaption class="print-caption">
+    <p class="print-lead">Somebody knows who this is.</p>
+    <p>
+      IdentifyCollection puts a museum’s unidentified photographs in front of
+      the people who might recognize them. Nothing joins the record until a
+      collections manager approves it.
+    </p>
+  </figcaption>
+</figure>

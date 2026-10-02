@@ -1,0 +1,15 @@
+{
+  "about": "The exact copy of Python that is placed inside the portable Windows zip. The build refuses to continue if the downloaded file's checksum (sha256) differs from the one recorded here. To move to a newer Python, change all of these together and re-run the build and the smoke test.",
+  "distribution": "python-build-standalone (https://github.com/astral-sh/python-build-standalone)",
+  "release": "20260929",
+  "python_version": "3.14.7",
+  "filename": "cpython-3.14.7+20260929-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+  "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20260929/cpython-3.14.7%2B20260929-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+  "sha256": "6378385d5e42ec0874656e5efd707fb92334a6972b1aca90fd254eb924a8f404",
+  "pip_target": {
+    "platform": "win_amd64",
+    "python_version": "3.14",
+    "implementation": "cp",
+    "abi": "cp314"
+  }
+}

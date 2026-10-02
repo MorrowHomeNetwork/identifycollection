@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}IdentifyCollection{% endblock %}
+
+{% block content %}
+<article class="sheet">
+  <h1>You are signed in, and that is the whole test.</h1>
+  <p class="lead">
+    This is build {{ app_version }}. It exists to prove one thing: that
+    IdentifyCollection can arrive as a single download, start with a
+    double-click on a Windows computer with no internet connection, and keep
+    its data in one folder. There is nothing to catalog here yet.
+  </p>
+
+  <h2>What comes next</h2>
+  <p>
+    The first working build will let you import a catalog export and a folder
+    of scans, show unidentified photographs for visitors to mark and explain,
+    queue their submissions for your approval, and export what you approve.
+  </p>
+
+  <h2>About this copy</h2>
+  <dl class="facts">
+    <div>
+      <dt>Version</dt>
+      <dd>{{ app_version }}</dd>
+    </div>
+    <div>
+      <dt>Where your data is kept</dt>
+      <dd><code>{{ data_dir }}</code></dd>
+    </div>
+    <div>
+      <dt>Database</dt>
+      <dd>SQLite, one file: <code>{{ database_file }}</code></dd>
+    </div>
+    <div>
+      <dt>Log file</dt>
+      <dd>{% if portable %}<code>{{ log_file }}</code>{% else %}Shown in the terminal window (development mode){% endif %}</dd>
+    </div>
+    <div>
+      <dt>Running on</dt>
+      <dd>Python {{ python_version }}, Django {{ django_version }}{% if portable %}, portable build{% else %}, development mode{% endif %}</dd>
+    </div>
+  </dl>
+  <p>
+    To back up, close IdentifyCollection and copy the whole data folder
+    somewhere safe. To move to another computer, move the whole
+    IdentifyCollection folder; the data folder travels inside it.
+  </p>
+</article>
+{% endblock %}

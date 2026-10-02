@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Create the first staff account | IdentifyCollection{% endblock %}
+
+{% block content %}
+<div class="entry">
+  <section class="card" aria-labelledby="page-title">
+    <h1 id="page-title">Create the first staff account</h1>
+    <p class="lead">
+      This copy of IdentifyCollection has no accounts yet. The one you create
+      now is the collections manager’s: it can do everything, including adding
+      other staff later. It is stored on this computer only.
+    </p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+      <div class="notice notice-error" role="alert">
+        {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+      </div>
+      {% endif %}
+      {% include "includes/field.html" with field=form.username %}
+      {% include "includes/field.html" with field=form.password1 %}
+      {% include "includes/field.html" with field=form.password2 %}
+      <button class="button" type="submit">Create account and sign in</button>
+    </form>
+  </section>
+
+  {% include "includes/photograph.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}IdentifyCollection{% endblock %}</title>
+  <link rel="icon" href="{% static 'img/mark.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the main content</a>
+
+  <header class="masthead">
+    <a class="brand" href="{% url 'home' %}">
+      <img class="brand-mark" src="{% static 'img/mark.svg' %}" alt="" width="36" height="36">
+      <span class="brand-name">IdentifyCollection</span>
+    </a>
+    {% if user.is_authenticated %}
+    <form class="session" method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <span class="session-who">Signed in as {{ user.get_username }}</span>
+      <button class="button button-quiet" type="submit">Sign out</button>
+    </form>
+    {% endif %}
+  </header>
+
+  <main id="main" class="page">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="colophon">
+    <p>
+      IdentifyCollection{% if app_version %} {{ app_version }}{% endif %}.
+      Free, open-source software for museums, under the GNU Affero General
+      Public License, version 3.
+      {% if source_url %}<a href="{{ source_url }}">Get the source code</a>.{% endif %}
+    </p>
+  </footer>
+</body>
+</html>

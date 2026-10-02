@@ -1,0 +1,138 @@
+# The automated build.
+#
+# GitHub runs this file on its own computers ("GitHub Actions") every time
+# new work is pushed. On a Windows machine it:
+#
+#   1. runs the automated tests;
+#   2. builds the portable zip;
+#   3. smoke-tests the zip: extracts it, starts it through the real
+#      "Start IdentifyCollection.bat", creates an account, signs in and out.
+#
+# When the push is a version tag (v0.0.1, v0.1.0, ...) and all of that passed,
+# a second job publishes the zip as a GitHub Release.
+#
+# Nothing here can publish a build that failed its tests.
+
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+# By default the build may only read the repository. The release job below
+# asks for more, and only for itself.
+permissions:
+  contents: read
+
+# A newer push to the same branch replaces a build still in progress.
+# Release (tag) builds are never interrupted.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Test, build and smoke-test (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v7
+
+      - name: Set up Python (for building; the zip carries its own)
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Install the pinned packages (checksums verified)
+        run: python -m pip install --disable-pip-version-check --require-hashes -r requirements.txt
+
+      - name: Check the tag matches app/VERSION and has release notes
+        if: github.ref_type == 'tag'
+        run: |
+          version="$(tr -d '[:space:]' < app/VERSION)"
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match app/VERSION ($version). Delete the tag, fix whichever is wrong, and tag again."
+            exit 1
+          fi
+          python packaging/release_notes.py "$version" > /dev/null
+
+      - name: Django's own checks
+        working-directory: app
+        run: python manage.py check
+
+      - name: Automated tests
+        working-directory: app
+        run: python manage.py test
+
+      - name: Build the portable zip
+        run: python packaging/build_portable.py
+
+      - name: Smoke-test the zip through the real batch file
+        run: python packaging/smoke_test.py dist/IdentifyCollection-*-windows-x64.zip --runner windows
+
+      - name: Keep the zip with this build
+        uses: actions/upload-artifact@v7
+        with:
+          name: portable-windows-zip
+          path: |
+            dist/IdentifyCollection-*-windows-x64.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish the GitHub Release
+    needs: build
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # needed to create the release; granted to this job only
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v7
+
+      - name: Fetch the zip that was just built and tested
+        uses: actions/download-artifact@v8
+        with:
+          name: portable-windows-zip
+          path: dist
+
+      - name: Confirm the zip is byte-for-byte the one that was tested
+        working-directory: dist
+        run: sha256sum --check SHA256SUMS.txt
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          python3 packaging/release_notes.py "$version" --checksums dist/SHA256SUMS.txt > release-notes.md
+
+          # Versions before 0.1.0, and anything like 0.2.0-rc1, are marked
+          # "pre-release" so nobody mistakes a test drop for a finished version.
+          prerelease=false
+          case "$version" in
+            0.0.*|*-*) prerelease=true ;;
+          esac
+
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            # The release already exists (this job was re-run): refresh it.
+            gh release upload "$GITHUB_REF_NAME" dist/IdentifyCollection-*-windows-x64.zip dist/SHA256SUMS.txt --clobber
+            gh release edit "$GITHUB_REF_NAME" --notes-file release-notes.md --prerelease="$prerelease"
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              dist/IdentifyCollection-*-windows-x64.zip dist/SHA256SUMS.txt \
+              --title "IdentifyCollection $version" \
+              --notes-file release-notes.md \
+              --prerelease="$prerelease" \
+              --verify-tag
+          fi

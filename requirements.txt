@@ -1,0 +1,25 @@
+# Everything IdentifyCollection needs in order to run, with exact versions.
+#
+# Each line also carries a checksum (the long "sha256" value). pip, Python's
+# package installer, refuses to install a file whose checksum does not match,
+# so nobody can slip a tampered package into a museum's copy.
+#
+# The same file is used for development ("pip install -r requirements.txt")
+# and for building the portable Windows zip (packaging/build_portable.py).
+#
+# All of these are "pure Python" packages: one file works on every operating
+# system. tzdata (the world's time-zone rules) is listed explicitly because
+# Windows has no time-zone database of its own for Python to use.
+
+Django==6.1.1 \
+    --hash=sha256:585fb82bf15053c42cf52e67c2f1b54a032dca384759315fd6678ab1870d1d72
+asgiref==3.12.1 \
+    --hash=sha256:fe386d1c2bff7259ea95929266d12a8cf9a8b5a1c2598402967d8792e7a7c094
+sqlparse==0.6.0 \
+    --hash=sha256:b861c0288ce2fa56209a9a6412d2e066ac664b3873b89c26c9d8415e8e32996f
+tzdata==2026.4 \
+    --hash=sha256:c2169a8b0a7a5e9674da5a135ccdfb2b3e671b333ed9fed17b41f73c34476e81
+waitress==3.0.2 \
+    --hash=sha256:c56d67fd6e87c2ee598b76abdd4e96cfad1f24cacdea5078d382b1f9d7b5ed2e
+whitenoise==6.12.0 \
+    --hash=sha256:fc5e8c572e33ebf24795b47b6a7da8da3c00cff2349f5b04c02f28d0cc5a3cc2

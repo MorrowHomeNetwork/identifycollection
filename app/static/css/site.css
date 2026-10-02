@@ -1,0 +1,470 @@
+/*
+  IdentifyCollection interface styles.
+
+  Hand-written, no framework and no build step. Everything the page needs is
+  in this file and the fonts folder next to it; nothing is fetched from the
+  internet.
+
+  The look comes from the collection store: grey archival board, white
+  photographic paper, cyanotype blue ink, pencil graphite, and one yellow
+  marking box, which is the gesture the whole project is built around.
+  The marking yellow is used for exactly two things: the box in the
+  illustration, and showing which control has keyboard focus.
+*/
+
+/* ---------- Typefaces (stored in this repository, SIL Open Font License) ---------- */
+
+@font-face {
+  font-family: "Besley";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/besley/besley-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Besley";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/besley/besley-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("../fonts/atkinson-hyperlegible-next/atkinson-hyperlegible-next-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("../fonts/atkinson-hyperlegible-next/atkinson-hyperlegible-next-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ---------- Tokens ---------- */
+
+:root {
+  color-scheme: light;
+
+  --board: #e3e8eb;          /* archival board: the page */
+  --paper: #ffffff;          /* photographic paper: panels and prints */
+  --prussian: #0f3554;       /* cyanotype blue: headings and actions */
+  --prussian-deep: #0a2740;
+  --graphite: #262c31;       /* pencil: running text */
+  --graphite-soft: #4c5760;  /* secondary text */
+  --rule: #b4bfc6;           /* hairlines and input borders at rest */
+  --marking: #ffc83d;        /* the marking box, and keyboard focus */
+  --alarm: #8f1d1d;          /* errors */
+  --alarm-wash: #fbeaea;
+
+  /* Clarendon for display: the face of nineteenth-century studio mounts. */
+  --display: "Besley", Rockwell, "Rockwell Nova", Georgia, serif;
+  /* Atkinson Hyperlegible for everything read or typed: drawn for low vision. */
+  --text: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif;
+  --mono: Consolas, "Cascadia Mono", Menlo, monospace;
+
+  --measure: 34rem;
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--board);
+  color: var(--graphite);
+  font-family: var(--text);
+  font-size: 1.125rem;
+  line-height: 1.55;
+}
+
+h1,
+h2 {
+  font-family: var(--display);
+  color: var(--prussian);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.5rem);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  margin: 2.5rem 0 0.5rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+a {
+  color: var(--prussian);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-thickness: 0.16em;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+/* Keyboard focus: a blue outline inside a yellow halo, visible on every surface. */
+:focus-visible {
+  outline: 3px solid var(--prussian);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 8px var(--marking);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  padding: 0.5rem 0.9rem;
+  background: var(--paper);
+  color: var(--prussian);
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  z-index: 10;
+}
+
+/* ---------- Page furniture ---------- */
+
+.masthead,
+.page,
+.colophon {
+  width: 100%;
+  max-width: 70rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.5rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: block;
+}
+
+.brand-name {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--prussian);
+}
+
+.session {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+}
+
+.session-who {
+  color: var(--graphite-soft);
+  font-size: 1rem;
+}
+
+.page {
+  flex: 1;
+  padding-block: clamp(1rem, 4vw, 3.5rem);
+}
+
+.colophon {
+  padding-block: 1.5rem 2rem;
+  color: var(--graphite-soft);
+  font-size: 0.95rem;
+}
+
+.colophon p {
+  margin: 0;
+  max-width: 46rem;
+}
+
+/* ---------- Sign-in and first-run layout ---------- */
+
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 60rem) {
+  .entry {
+    grid-template-columns: minmax(0, 27rem) minmax(0, 1fr);
+    gap: clamp(3rem, 7vw, 6rem);
+  }
+}
+
+.card {
+  background: var(--paper);
+  border-top: 6px solid var(--prussian);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.lead {
+  max-width: var(--measure);
+  font-size: 1.2rem;
+  color: var(--graphite);
+}
+
+.card .lead {
+  font-size: 1.125rem;
+  color: var(--graphite-soft);
+}
+
+/* ---------- The photograph ---------- */
+
+.print {
+  margin: 0;
+  max-width: 34rem;
+  justify-self: center;
+}
+
+.print-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--paper);
+  border: 0.9rem solid var(--paper);
+  border-bottom-width: 1.1rem;
+  box-shadow: 0 1.5rem 2.5rem -1.5rem rgb(10 39 64 / 0.55);
+}
+
+@media (min-width: 60rem) {
+  .print-image {
+    transform: rotate(-1.4deg);
+  }
+}
+
+.print-caption {
+  margin-top: 1.75rem;
+  max-width: var(--measure);
+  color: var(--graphite-soft);
+}
+
+.print-lead {
+  margin-bottom: 0.5rem;
+  font-family: var(--display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--prussian);
+}
+
+.marking-tag {
+  font-family: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--prussian-deep);
+}
+
+/* The one moment of motion: the box is drawn around the unknown person. */
+@media (prefers-reduced-motion: no-preference) {
+  .marking-box {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw-box 0.9s 0.4s cubic-bezier(0.3, 0, 0.2, 1) forwards;
+  }
+
+  .marking-shadow,
+  .marking-detail {
+    opacity: 0;
+    animation: settle 0.3s 1.25s ease-out forwards;
+  }
+}
+
+@keyframes draw-box {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes settle {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Forms ---------- */
+
+.field {
+  margin-bottom: 1.4rem;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+}
+
+.field-help {
+  margin-bottom: 0.5rem;
+  color: var(--graphite-soft);
+  font-size: 1rem;
+}
+
+.field-help ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.field input {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 2px solid var(--graphite-soft);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--graphite);
+  font: inherit;
+}
+
+.field-invalid input {
+  border-color: var(--alarm);
+}
+
+.field-errors {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--alarm);
+  font-weight: 700;
+}
+
+.notice {
+  margin-bottom: 1.4rem;
+  padding: 0.9rem 1rem;
+  border-left: 6px solid var(--prussian);
+  background: var(--board);
+}
+
+.notice p {
+  margin: 0;
+}
+
+.notice-error {
+  border-left-color: var(--alarm);
+  background: var(--alarm-wash);
+  color: var(--alarm);
+  font-weight: 700;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.7rem 1.4rem;
+  border: 2px solid var(--prussian);
+  border-radius: 2px;
+  background: var(--prussian);
+  color: var(--paper);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--prussian-deep);
+  border-color: var(--prussian-deep);
+}
+
+.button-quiet {
+  padding: 0.4rem 0.9rem;
+  background: transparent;
+  color: var(--prussian);
+}
+
+.button-quiet:hover {
+  background: var(--paper);
+  border-color: var(--prussian);
+}
+
+/* ---------- Plain reading pages ---------- */
+
+.sheet {
+  max-width: 46rem;
+}
+
+.sheet p {
+  max-width: var(--measure);
+}
+
+.sheet .lead {
+  max-width: 40rem;
+}
+
+.facts {
+  margin: 1rem 0 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.facts > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 40rem) {
+  .facts > div {
+    grid-template-columns: 14rem minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.facts dt {
+  font-weight: 700;
+}
+
+.facts dd {
+  margin: 0;
+}
