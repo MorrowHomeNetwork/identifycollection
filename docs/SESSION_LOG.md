@@ -4,6 +4,33 @@ What each working session delivered, newest first. One entry per session:
 what changed, the state it left things in, what is still open, what comes
 next. No personal details belong in this file.
 
+## 2026-10-05: First push, first green build, reachable on a network
+
+### What changed
+
+- The project moved to its own virtual machine and was pushed to GitHub from
+  there.
+- New setting `IDENTIFYCOLLECTION_EXTRA_HOSTS` (decision 21), with four tests,
+  so the development server can be opened from other computers on the same
+  network.
+
+### State at the end of the session
+
+- **The automated build passed on GitHub on its first run** (1 minute 19
+  seconds): tests, zip build and smoke test on a real Windows machine,
+  through the real batch file. This closes the "never run on GitHub" item
+  from the previous entry.
+- 52 automated tests pass.
+- Still not proven: a person's double-click on a Windows desktop, and what
+  Windows SmartScreen, Smart App Control or antivirus software say about the
+  unsigned Python.
+
+### Next
+
+1. Tag `v0.0.1` to publish the first release, and try it on the pilot laptop.
+2. Collect the items listed under 2026-10-01 from the pilot registrar.
+3. Phase 1, drop 1: catalog import.
+
 ## 2026-10-01: Step 0, the delivery pipeline
 
 ### What changed

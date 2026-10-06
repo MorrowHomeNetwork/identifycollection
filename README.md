@@ -115,6 +115,23 @@ Then open <http://127.0.0.1:8000/>. Stop the server with Ctrl+C.
 - `python manage.py runserver` starts a development web server that only
   your own computer can reach.
 
+### Opening it from another computer on your network
+
+The development server normally answers only on the computer it runs on. To
+run it on one machine (a spare PC, a virtual machine) and open it from
+others on the same home or museum network, tell it which address people
+will type, and let it listen on the network:
+
+```bash
+cd app
+IDENTIFYCOLLECTION_EXTRA_HOSTS=192.168.1.20 python manage.py runserver 0.0.0.0:8000
+```
+
+Replace `192.168.1.20` with that machine's own address, then open
+`http://192.168.1.20:8000/` from another computer. This is a development
+server: it shows technical details when something goes wrong and must never
+be reachable from the internet.
+
 ### Building the Windows zip
 
 From the top of the repository, on Windows, Linux or macOS:

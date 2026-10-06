@@ -206,6 +206,18 @@ The public repository contains no names or personal details of the people
 behind the pilot. They appear as "the pilot museum" and "the pilot
 registrar".
 
+### 21. Answering on a network is opt-in, by exact address (2026-10-05)
+
+By default the app answers only on the computer it runs on. A copy meant to
+be opened from other computers must be given the exact names or addresses to
+answer on (`IDENTIFYCOLLECTION_EXTRA_HOSTS`). "Answer on anything" (`*`) is
+refused.
+
+*Why:* developing on a separate machine needs it, and so will kiosk and
+server installs. Exact addresses keep the protection against a hostile web
+page reaching the app under a made-up name. The portable Windows build does
+not use the setting.
+
 ## Deferred on purpose
 
 Not forgotten; each waits for the phase where it matters.

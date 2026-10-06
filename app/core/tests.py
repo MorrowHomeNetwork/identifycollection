@@ -3,6 +3,7 @@ Automated tests for the home page, the health check and the error page.
 """
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import path, reverse
@@ -90,3 +91,30 @@ class DataInspectorTests(TestCase):
         response = self.client.get("/admin/")
         self.assertEqual(response.status_code, 302)
         self.assertIn("/admin/login/", response["Location"])
+
+
+class AddressTests(TestCase):
+    """Which addresses the app agrees to answer on."""
+
+    def test_an_address_nobody_listed_is_refused(self):
+        with self.assertLogs("django.security.DisallowedHost", level="ERROR"):
+            response = self.client.get("/healthz", HTTP_HOST="192.168.1.20:8000")
+        self.assertEqual(response.status_code, 400)
+
+    def test_a_listed_address_is_answered(self):
+        with self.settings(ALLOWED_HOSTS=[*settings.ALLOWED_HOSTS, "192.168.1.20"]):
+            response = self.client.get("/healthz", HTTP_HOST="192.168.1.20:8000")
+        self.assertEqual(response.status_code, 200)
+
+    def test_extra_addresses_are_read_from_a_comma_separated_list(self):
+        from config.settings import _extra_hosts
+
+        self.assertEqual(_extra_hosts(""), [])
+        self.assertEqual(_extra_hosts(" 192.168.1.20 , museum.example,, "), ["192.168.1.20", "museum.example"])
+
+    def test_answering_to_every_address_is_not_allowed(self):
+        from config.settings import _extra_hosts
+
+        for value in ("*", "192.168.1.20,*", "*.example"):
+            with self.subTest(value=value), self.assertRaises(ImproperlyConfigured):
+                _extra_hosts(value)

@@ -89,9 +89,29 @@ SECRET_KEY = _load_or_create_secret_key(DATA_DIR / "secret_key.txt")
 # never shown to a museum or its visitors.
 DEBUG = MODE == "dev"
 
-# Which addresses this copy answers to. Both modes are reachable only from
-# the computer they run on.
+
+
+def _extra_hosts(value: str) -> list[str]:
+    """Turn "192.168.1.20, museum.example" into a clean list of extra addresses."""
+    hosts = [host.strip() for host in value.split(",") if host.strip()]
+    if any("*" in host for host in hosts):
+        raise ImproperlyConfigured(
+            "IDENTIFYCOLLECTION_EXTRA_HOSTS must list exact names or addresses; '*' is not accepted."
+        )
+    return hosts
+
+
+# Which addresses this copy answers to. Unless told otherwise: only the
+# computer it runs on. A copy that other computers on the same network should
+# reach (for example one running in a virtual machine) must be told the exact
+# name or address people will type, separated by commas if there are several:
+#
+#     IDENTIFYCOLLECTION_EXTRA_HOSTS=192.168.1.20,museum.example
+#
+# Requests for any other address are refused. This stops another website from
+# tricking a browser into talking to this app under a made-up name.
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "[::1]"]
+ALLOWED_HOSTS += _extra_hosts(os.environ.get("IDENTIFYCOLLECTION_EXTRA_HOSTS", ""))
 
 # The very first staff account is created in the browser ("first-run setup").
 # The page only works while there are no accounts at all.

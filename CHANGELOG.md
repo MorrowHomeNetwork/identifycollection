@@ -7,6 +7,14 @@ Version numbers: `0.0.x` are scaffolding and test drops. `0.1.0` will be the
 first build a museum can do real work with (phase 1). The text under each
 version heading becomes the description of that version's GitHub Release.
 
+## [Unreleased]
+
+- For people running the code on a server or a virtual machine: the setting
+  `IDENTIFYCOLLECTION_EXTRA_HOSTS` lists the extra names or addresses the app
+  should answer on, so it can be opened from other computers on the same
+  network. The portable Windows build is unchanged and still answers only on
+  the computer it runs on.
+
 ## [0.0.1] - 2026-10-01
 
 The first test build. **It cannot import or identify anything yet.** Its only
