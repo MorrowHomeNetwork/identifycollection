@@ -75,6 +75,9 @@ not explained here, that is a mistake worth fixing.
 | **Web server** | The program that answers the browser's requests. In the portable build it runs on the same computer as the browser. |
 | **waitress** | The small web server used in the portable build. |
 | **WSGI** | The standard plug that lets any Python web server run any Python web application. |
+| **Pillow** | The package that reads scans (JPEG, TIFF, PNG) and makes the smaller pictures shown in the browser. |
+| **OpenSeadragon** | The zooming picture viewer on each photograph's page. Stored in this repository. |
+| **Derivative** | A copy of a scan made for a purpose: here, a zoomable JPEG and a small thumbnail. The original scan stays with the museum. |
 | **WhiteNoise** | The package that lets the app serve its own static files. |
 | **SQLite** | A database that lives in a single file. No separate database program to install. |
 | **PostgreSQL** | A full database server, planned for permanent installs. |

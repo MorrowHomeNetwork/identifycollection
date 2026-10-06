@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Review | IdentifyCollection{% endblock %}
+
+{% block content %}
+<article class="desk">
+  <h1>Review</h1>
+  <p class="lead">What visitors have sent in. Nothing here is public until you accept it.</p>
+  <nav class="tabs" aria-label="Which submissions to show">
+    {% for value, label in statuses %}
+    <a href="?show={{ value }}"{% if value == show %} aria-current="page"{% endif %}>{{ label }} <span class="count">{% if value == "pending" %}{{ counts.pending }}{% elif value == "accepted" %}{{ counts.accepted }}{% elif value == "rejected" %}{{ counts.rejected }}{% else %}{{ counts.withdrawn }}{% endif %}</span></a>
+    {% endfor %}
+  </nav>
+  {% if submissions %}
+  <ul class="rows">
+    {% for item in submissions %}
+    <li class="row">
+      <img class="row-image" src="{% url 'thumb_image' item.mystery.pk %}" alt="" loading="lazy">
+      <div class="row-text">
+        <a class="row-title" href="{% url 'submission' item.reference %}">{{ item.person_name }}</a>
+        <span class="row-meta">in &ldquo;{{ item.mystery.display_title }}&rdquo;. {{ item.get_confidence_display }}. Sent {{ item.created_at|date:"j M Y" }}. {{ item.reference }}</span>
+      </div>
+      <a class="button button-quiet" href="{% url 'submission' item.reference %}">Open</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="notice"><p>Nothing here.</p></div>
+  {% endif %}
+</article>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ mystery.display_title }} | IdentifyCollection{% endblock %}
+
+{% block content %}
+<article class="mystery">
+  <p class="trail"><a href="{% url 'gallery' %}">All photographs</a></p>
+  {% if not mystery.is_public %}
+  <div class="notice"><p>This photograph is <strong>{{ mystery.get_status_display|lower }}</strong>. Only staff can see this page.</p></div>
+  {% endif %}
+  <h1>{{ mystery.display_title }}</h1>
+  <p class="mystery-meta">
+    {% if mystery.date_text %}{{ mystery.date_text }}{% endif %}{% if mystery.date_text and mystery.object_id %} · {% endif %}{% if mystery.object_id %}Object {{ mystery.object_id }}{% endif %}
+  </p>
+  {% if mystery.description %}<p class="mystery-description">{{ mystery.description }}</p>{% endif %}
+
+  {% include "mysteries/_viewer.html" with marking=mystery.is_public %}
+
+  <section class="named" aria-labelledby="named-title">
+    <h2 id="named-title">Who has been named</h2>
+    {% if accepted %}
+    <ul class="named-list">
+      {% for item in accepted %}
+      <li><strong>{{ item.person_name }}</strong>{% if item.position_note %} ({{ item.position_note }}){% endif %}{% if item.public_credit %}, identified by {{ item.public_credit }}{% endif %}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>Nobody in this photograph has been named yet.</p>
+    {% endif %}
+  </section>
+
+  {% if mystery.is_public %}
+  <section class="card answer" aria-labelledby="answer-title">
+    <h2 id="answer-title">Tell the museum who you recognize</h2>
+    <p>
+      One person at a time. Press <strong>Mark a person</strong> under the
+      photograph and drag a box around their face, then answer below. You do
+      not need an account.
+    </p>
+    <form method="post" enctype="multipart/form-data" novalidate id="identify-form">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+      <div class="notice notice-error" role="alert">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+      {% elif form.errors %}
+      <div class="notice notice-error" role="alert"><p>Nothing was sent yet. Some answers below need another look.</p></div>
+      {% endif %}
+      {{ form.box_x }}{{ form.box_y }}{{ form.box_w }}{{ form.box_h }}
+      <div class="unseen" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+      {% include "includes/field.html" with field=form.person_name %}
+      {% include "includes/choices.html" with field=form.confidence %}
+      {% include "includes/field.html" with field=form.position_note %}
+      {% include "includes/choices.html" with field=form.evidence_kind %}
+      {% include "includes/field.html" with field=form.evidence_text %}
+      <div data-evidence="document">
+        {% include "includes/field.html" with field=form.evidence_file %}
+        {% include "includes/tick.html" with field=form.rights %}
+      </div>
+      <div data-evidence="testimony cross_reference">
+        {% include "includes/tick.html" with field=form.consent %}
+      </div>
+
+      <fieldset class="about-you">
+        <legend>About you (optional)</legend>
+        <p class="field-help">Leave this empty to stay anonymous. The museum will remove these details whenever you ask.</p>
+        {% include "includes/field.html" with field=form.contributor_name %}
+        {% include "includes/field.html" with field=form.contributor_contact %}
+        {% include "includes/tick.html" with field=form.contact_ok %}
+        {% include "includes/tick.html" with field=form.credit_ok %}
+      </fieldset>
+
+      <button class="button" type="submit">Send to the museum</button>
+      <p class="field-help after-button">Nothing you send is shown to anyone else unless museum staff accept it.</p>
+    </form>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'vendor/openseadragon/openseadragon.min.js' %}"></script>
+<script src="{% static 'js/viewer.js' %}"></script>
+<script src="{% static 'js/identify.js' %}"></script>
+{% endblock %}

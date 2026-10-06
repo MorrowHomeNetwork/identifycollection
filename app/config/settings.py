@@ -138,7 +138,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",  # serving CSS, fonts and images
     "accounts",  # ours: staff accounts, sign-in, first-run setup
-    "core",  # ours: the home page and the health check
+    "core",  # ours: the staff home page and the health check
+    "mysteries",  # ours: photographs, identifications, review, export
 ]
 
 # "Middleware" is a chain of small steps every request passes through.
@@ -166,6 +167,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processors.about",
+                "mysteries.context_processors.staff_counts",
             ],
         },
     },
@@ -234,8 +236,16 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # folder ("collected") so the app can serve them without searching.
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Scans and other files museums add will live here (used from phase 1 on).
+# Pictures made from the museum's scans, and files contributors attach as
+# evidence, live here, inside the data folder.
 MEDIA_ROOT = DATA_DIR / "media"
+
+# While a file is being uploaded it is written here first. Keeping this inside
+# the data folder means nothing of the museum's is ever left in a system
+# temporary folder elsewhere on the computer.
+FILE_UPLOAD_TEMP_DIR = DATA_DIR / "tmp"
+for _folder in (MEDIA_ROOT, FILE_UPLOAD_TEMP_DIR):
+    _folder.mkdir(parents=True, exist_ok=True)
 
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},

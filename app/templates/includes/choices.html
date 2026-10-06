@@ -1,0 +1,10 @@
+{# A question answered by picking one of a few choices. #}
+<fieldset class="field choices{% if field.errors %} field-invalid{% endif %}">
+  <legend class="field-label">{{ field.label }}</legend>
+  {% for radio in field %}
+  <label class="choice">{{ radio.tag }} <span>{{ radio.choice_label }}</span></label>
+  {% endfor %}
+  {% if field.errors %}
+  <ul class="field-errors">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+  {% endif %}
+</fieldset>

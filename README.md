@@ -12,17 +12,18 @@ face in a photograph, says who it is and how they know, and a collections
 manager reviews the evidence and approves or declines it. Approved
 identifications are exported back to the museum's catalog.
 
-> ## Status: scaffolding only (version 0.0.1)
+> ## Status: early test build (version 0.0.2)
 >
-> **This version cannot import or identify anything yet.** It is "Step 0":
-> a skeleton with a sign-in page, built to prove that the software can be
-> delivered to a museum as a single zip file that starts with a double-click
-> on a Windows computer, with nothing installed and no internet connection.
-> The first build a museum can do real work with will be 0.1.0.
+> The whole loop works and is ready to be tried: add photographs, show them,
+> collect identifications with evidence, review them, export what was
+> accepted. **Importing a catalog file is not built yet**, and nothing here
+> has been used by a museum on real records. Version 0.1.0 will be the first
+> one meant for that.
 
 ## What it will do
 
-The first working version (phase 1) is planned to cover one complete loop:
+Phase 1 covers one complete loop. Steps 2 to 5 work today, and scans can
+already be added by hand; importing the catalog is the part still to come:
 
 1. **Import** a catalog export and a folder of scans.
 2. **Show** the unidentified photographs in a gallery with deep zoom.
@@ -156,7 +157,7 @@ how a version is published.
 
 | Path | What it is |
 |---|---|
-| `app/` | Everything that ships: the Django project (`config/`), its parts (`accounts/`, `core/`), page templates, the stylesheet and fonts, and `launch.py`, the program behind the double-click |
+| `app/` | Everything that ships: the Django project (`config/`), its parts (`accounts/`, `core/`, and `mysteries/`, which holds photographs, answers, review and export), page templates, the stylesheet and fonts, and `launch.py`, the program behind the double-click |
 | `app/VERSION` | The version number. The one place it is written down |
 | `packaging/` | The scripts that build and smoke-test the Windows zip, the pinned Python runtime, and the files Windows users see |
 | `.github/workflows/build.yml` | The automated build that GitHub runs on every push |

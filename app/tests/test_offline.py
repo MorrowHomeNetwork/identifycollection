@@ -24,6 +24,11 @@ TEXT_TYPES = {".html", ".css", ".js", ".mjs", ".svg", ".txt", ".json", ".xml"}
 # Licence texts legitimately mention web addresses; they are not loaded by pages.
 EXEMPT_NAMES = {"OFL.txt", "LICENSE.txt", "LICENSE"}
 
+# Libraries written by others and stored here. Their compressed code contains
+# web addresses in comments and strings, which would trip the line-by-line
+# check below without loading anything.
+VENDOR_DIR = settings.BASE_DIR / "static" / "vendor"
+
 # Anything that makes a browser FETCH from another server.
 EXTERNAL_LOAD = re.compile(
     r"""
@@ -82,6 +87,8 @@ class SourceFilesStayLocalTests(TestCase):
             for path in sorted(folder.rglob("*")):
                 if not path.is_file() or path.suffix.lower() not in TEXT_TYPES or path.name in EXEMPT_NAMES:
                     continue
+                if VENDOR_DIR in path.parents:
+                    continue  # other people's libraries, checked by hand when added (see VendoredLibraryTests)
                 checked += 1
                 text = path.read_text(encoding="utf-8")
                 for number, line in enumerate(text.splitlines(), start=1):
@@ -134,10 +141,16 @@ class RenderedPagesStayLocalTests(TestCase):
         get_user_model().objects.create_user("registrar", password="lantern-slide-archive-1908")
         self._assert_page_is_self_contained(self.client.get(reverse("login")))
 
-    def test_home_page(self):
-        user = get_user_model().objects.create_user("registrar", password="lantern-slide-archive-1908")
+    def test_staff_pages(self):
+        user = get_user_model().objects.create_user("registrar", password="lantern-slide-archive-1908", is_staff=True)
         self.client.force_login(user)
-        self._assert_page_is_self_contained(self.client.get(reverse("home")))
+        for name in ("home", "photos", "queue", "export"):
+            with self.subTest(page=name):
+                self._assert_page_is_self_contained(self.client.get(reverse(name)))
+
+    def test_gallery(self):
+        get_user_model().objects.create_user("registrar", password="lantern-slide-archive-1908")
+        self._assert_page_is_self_contained(self.client.get(reverse("gallery")))
 
     def test_data_inspector_sign_in_page(self):
         self._assert_page_is_self_contained(self.client.get("/admin/login/"))
@@ -154,3 +167,12 @@ class FontsAreInTheRepositoryTests(TestCase):
                 path = (stylesheet.parent / address).resolve()
                 self.assertTrue(path.is_file(), f"missing font file: {path}")
                 self.assertTrue((path.parent / "OFL.txt").is_file(), f"font licence missing next to {path.name}")
+
+
+class VendoredLibraryTests(TestCase):
+    def test_every_library_stored_here_carries_its_licence(self):
+        libraries = [folder for folder in VENDOR_DIR.iterdir() if folder.is_dir()]
+        self.assertTrue(libraries)
+        for folder in libraries:
+            with self.subTest(library=folder.name):
+                self.assertTrue(any(folder.glob("LICENSE*")), f"no licence file in static/vendor/{folder.name}")

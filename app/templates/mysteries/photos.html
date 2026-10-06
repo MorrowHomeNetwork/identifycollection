@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Photographs | IdentifyCollection{% endblock %}
+
+{% block content %}
+<article class="desk">
+  <h1>Photographs</h1>
+  <p class="lead">{{ total }} in all: {{ counts.published }} on show, {{ counts.draft }} not yet on show, {{ counts.retired }} taken off show.</p>
+
+  <section class="card" aria-labelledby="add-title">
+    <h2 id="add-title">Add photographs</h2>
+    <p>
+      Choose scans from this computer. JPEG, TIFF and PNG all work, and large
+      files are fine. New photographs are <strong>not shown to visitors</strong>
+      until you put them on show.
+    </p>
+    <form id="upload-form" method="post" action="{% url 'photo_upload' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="field">
+        <label class="field-label" for="upload-files">Choose files</label>
+        <input id="upload-files" type="file" name="file" multiple accept="image/*,.tif,.tiff">
+      </div>
+      <div class="field" id="folder-field" hidden>
+        <label class="field-label" for="upload-folder">Or choose a whole folder of scans</label>
+        <input id="upload-folder" type="file" webkitdirectory multiple>
+      </div>
+      <button class="button" type="submit">Add these photographs</button>
+    </form>
+    <div id="upload-progress" class="upload-progress" role="status" aria-live="polite" hidden></div>
+  </section>
+
+  {% if photos %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="bulk">
+      <button class="button" name="action" value="publish">Put ticked on show</button>
+      <button class="button button-quiet" name="action" value="retire">Take ticked off show</button>
+      {% if counts.draft %}<button class="button button-quiet" name="action" value="publish_all">Put all {{ counts.draft }} new on show</button>{% endif %}
+    </div>
+    <ul class="rows">
+      {% for photo in photos %}
+      <li class="row">
+        <input class="row-tick" type="checkbox" name="photo" value="{{ photo.pk }}" aria-label="Select {{ photo.display_title }}">
+        <img class="row-image" src="{% url 'thumb_image' photo.pk %}" alt="" loading="lazy">
+        <div class="row-text">
+          <a class="row-title" href="{{ photo.get_absolute_url }}">{{ photo.display_title }}</a>
+          <span class="row-meta">{{ photo.original_name }}, {{ photo.width }} &times; {{ photo.height }} pixels{% if photo.object_id %}, object {{ photo.object_id }}{% endif %}</span>
+          <a href="{% url 'photo_edit' photo.pk %}">Edit details</a>
+        </div>
+        <span class="badge badge-{{ photo.status }}">{{ photo.get_status_display }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </form>
+  {% endif %}
+
+  <section class="practice" aria-labelledby="practice-title">
+    <h2 id="practice-title">Practice photographs</h2>
+    <p>Six made-up pictures showing nobody real, for trying everything out before you add your own. Removing them also removes anything sent in about them.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% if has_samples %}
+      <button class="button button-quiet" name="action" value="remove_samples">Remove the practice photographs</button>
+      {% else %}
+      <button class="button button-quiet" name="action" value="add_samples">Add the practice photographs</button>
+      {% endif %}
+    </form>
+  </section>
+</article>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/upload.js' %}"></script>
+{% endblock %}

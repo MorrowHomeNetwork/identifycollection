@@ -108,6 +108,8 @@ MUST_EXIST = [
     "runtime/Lib/site-packages/waitress/__init__.py",
     "runtime/Lib/site-packages/whitenoise/__init__.py",
     "runtime/Lib/site-packages/tzdata/zoneinfo/UTC",
+    "runtime/Lib/site-packages/PIL/__init__.py",
+    "app/static/vendor/openseadragon/LICENSE.txt",
     "app/launch.py",
     "app/VERSION",
     "app/config/settings.py",

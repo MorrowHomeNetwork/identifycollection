@@ -218,6 +218,64 @@ server installs. Exact addresses keep the protection against a hostile web
 page reaching the app under a made-up name. The portable Windows build does
 not use the setting.
 
+## Part 3: Phase 1 decisions (2026-10-06)
+
+### 22. Pictures are made with Pillow for now, not libvips
+
+Decision 4 named libvips for making browser-sized copies of scans. This
+version uses Pillow instead.
+
+*Why:* Pillow installs as one ordinary, checksum-pinned package on Windows
+and Linux, and it is proven inside the portable zip by the smoke test.
+libvips would add a large set of extra Windows program files to the zip for
+no benefit at the sizes small museums scan at.
+*Cost:* a scan is read into memory whole, so a truly enormous file (hundreds
+of megapixels) is slow. *Reversible?* Yes. All picture-making is in one
+file, `app/mysteries/images.py`. libvips remains the plan for server
+installs if speed ever matters.
+
+### 23. The marking tool is our own small script, not Annotorious
+
+Decision 4 named Annotorious for drawing the box around a person. This
+version uses about 150 lines of our own JavaScript on top of OpenSeadragon.
+
+*Why:* one box per answer is all that is needed, and a small tool we wrote
+can be worded and shaped for a first-time visitor on a kiosk or a phone.
+*What was kept from decision 4:* the standard. Every box is stored as
+fractions of the picture and exported in W3C Web Annotation notation, so
+Annotorious or any other standard tool can be adopted later without touching
+stored data.
+
+### 24. Original scan files are not copied in
+
+IdentifyCollection keeps a zoomable JPEG of each scan (4000 pixels on the
+long side) and a thumbnail, plus the original's file name, size, dimensions
+and fingerprint. It does not keep the original file.
+
+*Why:* the museum already has its masters, and the data folder has to stay
+small enough to back up easily and carry on a USB stick. Marked areas are
+exported in pixels of the original scan, so nothing is lost by this.
+
+### 25. The front page belongs to visitors
+
+The site's front page is the public gallery. Staff pages live under
+`/staff/` and require a staff sign-in. A photograph is visible to visitors
+only after staff put it on show, and a name only after staff accept it.
+
+### 26. Practice photographs are drawings, and removable
+
+The built-in practice set is drawn by the program (plain silhouettes), so no
+real person and nobody's copyrighted photograph ships with the software.
+Practice material is flagged as such and is the only thing that can be
+deleted outright, together with anything sent in about it.
+
+### 27. One piece of evidence per answer, of three kinds
+
+Personal knowledge (with agreement that the museum may keep the account), an
+attached document or photograph (with confirmation of the right to share
+it), or a pointer to another record. Attached files are stored under random
+names and can be opened by staff only.
+
 ## Deferred on purpose
 
 Not forgotten; each waits for the phase where it matters.
@@ -225,6 +283,9 @@ Not forgotten; each waits for the phase where it matters.
 | Item | When |
 |---|---|
 | A way to reset a forgotten password in the portable build | Phase 1 |
+| Importing a catalog file: PastPerfect (needs a real export file first) and generic CSV with column matching | Next in phase 1 |
+| Limiting how fast one visitor can send answers | Before any install reachable from the internet |
+| Deep-zoom tiles for scans larger than 4000 pixels | If visitors need to zoom further |
 | Limiting repeated wrong-password attempts | Before any install reachable from a network (phase 2) |
 | A Content-Security-Policy header (a browser-enforced version of the no-internet rule) | With the first JavaScript (phase 1) |
 | Each museum's own time zone for displayed times | Phase 1 |

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Export | IdentifyCollection{% endblock %}
+
+{% block content %}
+<article class="sheet">
+  <h1>Export</h1>
+  <p class="lead">
+    One spreadsheet file of everything you have accepted:
+    <strong>{{ counts.accepted }}</strong> standing today, and
+    <strong>{{ counts.withdrawn }}</strong> later withdrawn.
+  </p>
+  <p>Withdrawn identifications are included, marked as withdrawn with the reason, so that anything already copied into your catalog can be corrected.</p>
+  <p><a class="button" href="{% url 'export_csv' %}">Download identifications (CSV)</a></p>
+  <h2>What is in the file</h2>
+  <p>A CSV file opens in Excel, LibreOffice or any spreadsheet program. One row per identification, with these columns:</p>
+  <p class="columns">{% for column in columns %}<code>{{ column }}</code>{% if not forloop.last %} {% endif %}{% endfor %}</p>
+  <p>The box columns give the marked area in pixels of your original scan. <code>w3c_selector</code> gives the same area in the W3C Web Annotation notation that other collection software can read.</p>
+</article>
+{% endblock %}

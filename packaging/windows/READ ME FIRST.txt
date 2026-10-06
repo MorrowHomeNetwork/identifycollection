@@ -5,9 +5,13 @@ A tool that helps a museum's visitors and community identify
 the people in unidentified photographs, with every answer
 approved by the collections manager before it joins the record.
 
-This is an early TEST BUILD. It proves that IdentifyCollection
-can start on a Windows computer with a double-click. It cannot
-import or identify anything yet.
+This is an early TEST BUILD, for trying things out. You can add
+photographs, let people identify who is in them, review what
+they send, and export what you accept. Importing a catalog file
+is not built yet. Please do not rely on it for real records.
+
+To practise: sign in, open "Photographs", and press "Add the
+practice photographs" at the bottom of the page.
 
 
 TO START

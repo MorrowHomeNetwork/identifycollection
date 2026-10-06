@@ -4,6 +4,50 @@ What each working session delivered, newest first. One entry per session:
 what changed, the state it left things in, what is still open, what comes
 next. No personal details belong in this file.
 
+## 2026-10-06: Phase 1, the working loop (version 0.0.2)
+
+### What changed
+
+- New part of the app, `mysteries/`: photographs, visitors' answers with
+  evidence, review with a permanent history, and the export.
+- The front page is now the public gallery; staff pages moved under `/staff/`.
+- Two new ingredients: Pillow (reads scans) and OpenSeadragon (zooming),
+  both stored or pinned, neither loaded from the internet.
+- The smoke test now performs the whole acceptance loop against the built
+  zip: scan in, put on show, visitor identifies someone with evidence, staff
+  accept, export file out.
+- Decisions 22 to 27 record where this departs from the original plan
+  (Pillow instead of libvips, our own marking tool instead of Annotorious)
+  and why.
+
+### State at the end of the session
+
+- 83 automated tests pass on Python 3.12 and 3.14.
+- The loop was walked in a real browser engine, including dragging a box
+  around a face, with no script errors.
+- The Windows zip (about 28 MB) passes the extended smoke test under Wine
+  with the real Windows Python and the Windows build of Pillow.
+- Published so far: v0.0.1, built and smoke-tested by GitHub on real Windows.
+- **Not yet proven:** this version on GitHub's Windows machine (it has not
+  been pushed yet); anyone's double-click on a Windows desktop; the pages on
+  a real phone or a touch-screen kiosk.
+
+### Open issues
+
+1. Catalog import is not built. PastPerfect import is blocked until a real
+   export file is available; the format will not be guessed.
+2. No limit on how fast answers can be sent (fine offline and on a home
+   network; needed before the internet).
+3. The practice photographs are crude drawings.
+4. Carried over: unsigned Python in the zip, no password reset, synced
+   folders (OneDrive) untested.
+
+### Next
+
+1. Apply this drop, push, and tag `v0.0.2` once the build is green.
+2. Try it: on the test server, and from the zip on the pilot laptop.
+3. Catalog import, starting with generic CSV.
+
 ## 2026-10-05: First push, first green build, reachable on a network
 
 ### What changed

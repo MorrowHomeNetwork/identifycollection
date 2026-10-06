@@ -468,3 +468,542 @@ code {
 .facts dd {
   margin: 0;
 }
+
+/* ==========================================================================
+   Phase 1: the gallery, the photograph page, and the staff desk
+   ========================================================================== */
+
+/* ---------- Staff navigation and messages ---------- */
+
+.staff-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  font-weight: 700;
+}
+
+.staff-nav a {
+  text-decoration: none;
+  padding-block: 0.2rem;
+  border-bottom: 3px solid transparent;
+}
+
+.staff-nav a:hover {
+  border-bottom-color: var(--prussian);
+}
+
+.count {
+  display: inline-block;
+  min-width: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 1rem;
+  background: var(--prussian);
+  color: var(--paper);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+  text-align: center;
+}
+
+.messages {
+  max-width: 46rem;
+}
+
+.notice-done {
+  border-left-color: #1f6b45;
+  background: #e6f2ea;
+}
+
+.trail {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+}
+
+.trail a::before {
+  content: "\2190\00a0";
+}
+
+/* ---------- More kinds of form control ---------- */
+
+.field textarea,
+.field select {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 2px solid var(--graphite-soft);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--graphite);
+  font: inherit;
+}
+
+.field input[type="file"] {
+  padding: 0.5rem;
+  border-style: dashed;
+}
+
+fieldset.field,
+.about-you {
+  min-width: 0;
+  margin-inline: 0;
+  padding: 0;
+  border: 0;
+}
+
+.about-you {
+  margin-block: 2rem 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.about-you legend,
+fieldset.field legend {
+  padding: 0;
+  font-weight: 700;
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding-block: 0.3rem;
+  cursor: pointer;
+}
+
+.field .choice input,
+.choice input {
+  flex: none;
+  display: inline-block;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  accent-color: var(--prussian);
+}
+
+.field-invalid textarea {
+  border-color: var(--alarm);
+}
+
+.after-button {
+  margin-top: 0.8rem;
+}
+
+.unseen {
+  position: absolute;
+  left: -200vw;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.button-danger {
+  border-color: var(--alarm);
+  background: var(--alarm);
+}
+
+.button-danger:hover {
+  border-color: #6f1414;
+  background: #6f1414;
+}
+
+a.button {
+  text-decoration: none;
+}
+
+/* ---------- The wall of photographs ---------- */
+
+.wall .lead {
+  max-width: 44rem;
+}
+
+.prints {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 1.75rem;
+  margin: 2rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.print-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.7rem 0.7rem 1rem;
+  background: var(--paper);
+  box-shadow: 0 1px 2px rgb(15 53 84 / 0.18), 0 10px 22px -12px rgb(15 53 84 / 0.4);
+  color: var(--graphite);
+  text-decoration: none;
+}
+
+.print-card:hover .print-card-title {
+  text-decoration: underline;
+}
+
+.print-card-image {
+  display: block;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 0.7rem;
+  background: var(--board);
+}
+
+.print-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.print-card-title {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--prussian);
+  line-height: 1.25;
+}
+
+.print-card-meta {
+  margin-top: 0.25rem;
+  color: var(--graphite-soft);
+  font-size: 0.95rem;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+/* ---------- One photograph ---------- */
+
+.mystery-meta {
+  margin-top: -0.4rem;
+  color: var(--graphite-soft);
+}
+
+.mystery-description {
+  max-width: var(--measure);
+}
+
+.viewer-frame {
+  margin-block: 1.2rem 1.6rem;
+  padding: 0.7rem;
+  background: var(--paper);
+  box-shadow: 0 1px 2px rgb(15 53 84 / 0.18), 0 14px 30px -16px rgb(15 53 84 / 0.45);
+}
+
+.viewer {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: min(76vh, 48rem);
+  min-height: 18rem;
+  background: var(--graphite);
+}
+
+.viewer > noscript img,
+.viewer > img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+}
+
+.viewer.is-marking,
+.viewer.is-marking canvas {
+  cursor: crosshair !important;
+}
+
+.viewer-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding-top: 0.7rem;
+}
+
+.button-mark {
+  margin-left: auto;
+}
+
+.button-mark[aria-pressed="true"] {
+  background: var(--paper);
+  color: var(--prussian);
+}
+
+.mark-status {
+  flex-basis: 100%;
+  min-height: 1.5rem;
+  font-weight: 700;
+  color: var(--prussian);
+}
+
+/* The boxes drawn over the photograph. The yellow one is the visitor's own mark. */
+.box {
+  box-sizing: border-box;
+  pointer-events: none;
+  border: 3px solid var(--paper);
+  outline: 1px solid var(--prussian);
+}
+
+.box-draft {
+  border-color: var(--marking);
+  outline-color: var(--graphite);
+}
+
+.box-proposed {
+  border-style: dashed;
+  border-color: var(--marking);
+  outline-color: var(--graphite);
+}
+
+.box-tag {
+  position: absolute;
+  left: -3px;
+  top: 100%;
+  max-width: 16rem;
+  padding: 0.1rem 0.45rem;
+  background: var(--paper);
+  color: var(--prussian);
+  font-family: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.box-proposed .box-tag {
+  background: var(--marking);
+  color: var(--graphite);
+}
+
+.named {
+  max-width: 46rem;
+  margin-bottom: 2rem;
+}
+
+.named-list {
+  padding-left: 1.2rem;
+}
+
+.answer {
+  max-width: 46rem;
+}
+
+.reference {
+  font-family: var(--mono);
+  font-size: 1.15em;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- The staff desk ---------- */
+
+.desk > h1 + .lead {
+  max-width: 44rem;
+}
+
+.desk .card {
+  max-width: 46rem;
+  margin-block: 1.5rem 2rem;
+}
+
+.steps {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  counter-increment: step;
+  padding: 1rem 1.2rem;
+  background: var(--paper);
+  border-left: 6px solid var(--prussian);
+}
+
+.steps h2 {
+  margin: 0 0 0.2rem;
+}
+
+.steps h2::before {
+  content: counter(step) ". ";
+}
+
+.steps p {
+  margin: 0;
+}
+
+.bulk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-block: 1.5rem 1rem;
+}
+
+.rows {
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 0.3rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.row-tick {
+  flex: none;
+  width: 1.4rem;
+  height: 1.4rem;
+  accent-color: var(--prussian);
+}
+
+.row-image {
+  flex: none;
+  width: 6rem;
+  height: 4.5rem;
+  object-fit: cover;
+  background: var(--paper);
+}
+
+.row-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.row-title {
+  font-weight: 700;
+}
+
+.row-meta {
+  color: var(--graphite-soft);
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.badge {
+  flex: none;
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  border: 2px solid var(--graphite-soft);
+  color: var(--graphite);
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-published,
+.badge-accepted {
+  border-color: #1f6b45;
+  background: #e6f2ea;
+}
+
+.badge-withdrawn,
+.badge-rejected,
+.badge-retired {
+  background: var(--paper);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.6rem;
+  margin-block: 1.2rem;
+  font-weight: 700;
+}
+
+.tabs a {
+  padding-bottom: 0.3rem;
+  border-bottom: 4px solid transparent;
+  text-decoration: none;
+}
+
+.tabs a[aria-current="page"] {
+  border-bottom-color: var(--prussian);
+}
+
+.tabs .count {
+  background: var(--paper);
+  color: var(--prussian);
+}
+
+.split {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 68rem) {
+  .split {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .split .viewer {
+    max-height: min(64vh, 40rem);
+  }
+}
+
+.split .facts > div {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem;
+}
+
+.quoted {
+  margin: 0.4rem 0;
+  padding-left: 0.9rem;
+  border-left: 4px solid var(--rule);
+}
+
+.history {
+  padding-left: 1.2rem;
+}
+
+.privacy {
+  margin-top: 2rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--rule);
+}
+
+.privacy summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.practice {
+  max-width: 46rem;
+  margin-top: 3rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.upload-progress {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  background: var(--board);
+  font-weight: 700;
+}
+
+.upload-progress ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+  font-weight: 400;
+}
+
+.edit-image {
+  max-width: 16rem;
+  border: 0.5rem solid var(--paper);
+}
+
+.columns {
+  line-height: 2;
+}

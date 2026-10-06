@@ -1,0 +1,16 @@
+{% load static %}{# The zoomable photograph. Needs: mystery, boxes. Optional: marking (true to allow drawing a box). #}
+<div class="viewer-frame">
+  <div id="viewer" class="viewer" data-image="{% url 'web_image' mystery.pk %}" data-width="{{ mystery.web_width }}" data-height="{{ mystery.web_height }}">
+    <noscript><img src="{% url 'web_image' mystery.pk %}" alt="{{ mystery.display_title }}"></noscript>
+  </div>
+  <div class="viewer-tools">
+    <button type="button" class="button button-quiet" data-zoom="in">Zoom in</button>
+    <button type="button" class="button button-quiet" data-zoom="out">Zoom out</button>
+    <button type="button" class="button button-quiet" data-zoom="home">Whole picture</button>
+    {% if marking %}
+    <button type="button" class="button button-mark" id="mark-button" aria-pressed="false">Mark a person</button>
+    <span id="mark-status" class="mark-status" role="status" aria-live="polite"></span>
+    {% endif %}
+  </div>
+</div>
+{{ boxes|json_script:"boxes" }}

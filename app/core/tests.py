@@ -42,11 +42,17 @@ class HealthCheckTests(TestCase):
 class HomePageTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = User.objects.create_user("registrar", password="lantern-slide-archive-1908")
+        cls.user = User.objects.create_user("registrar", password="lantern-slide-archive-1908", is_staff=True)
 
     def test_requires_signing_in(self):
         response = self.client.get(reverse("home"))
-        self.assertRedirects(response, "/login/?next=/")
+        self.assertRedirects(response, "/login/?next=/staff/")
+
+    def test_is_closed_to_accounts_that_are_not_staff(self):
+        self.client.force_login(User.objects.create_user("visitor", password="lantern-slide-archive-1908"))
+        with self.assertLogs("django.request", level="WARNING"):
+            response = self.client.get(reverse("home"))
+        self.assertEqual(response.status_code, 403)
 
     def test_shows_the_version_and_where_the_data_is(self):
         self.client.force_login(self.user)

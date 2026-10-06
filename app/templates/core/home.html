@@ -1,23 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}IdentifyCollection{% endblock %}
+{% block title %}Staff home | IdentifyCollection{% endblock %}
 
 {% block content %}
 <article class="sheet">
-  <h1>You are signed in, and that is the whole test.</h1>
+  <h1>Staff home</h1>
   <p class="lead">
-    This is build {{ app_version }}. It exists to prove one thing: that
-    IdentifyCollection can arrive as a single download, start with a
-    double-click on a Windows computer with no internet connection, and keep
-    its data in one folder. There is nothing to catalog here yet.
+    Three steps: add photographs, review what visitors send in, and export
+    what you accept. Visitors only ever see photographs you have put on show
+    and names you have accepted.
   </p>
 
-  <h2>What comes next</h2>
-  <p>
-    The first working build will let you import a catalog export and a folder
-    of scans, show unidentified photographs for visitors to mark and explain,
-    queue their submissions for your approval, and export what you approve.
-  </p>
+  <ol class="steps">
+    <li>
+      <h2><a href="{% url 'photos' %}">Photographs</a></h2>
+      <p>{{ stats.published }} on show, {{ stats.draft }} waiting to be put on show.</p>
+    </li>
+    <li>
+      <h2><a href="{% url 'queue' %}">Review</a></h2>
+      <p>{% if stats.pending %}<strong>{{ stats.pending }} waiting for your decision.</strong>{% else %}Nothing is waiting for a decision.{% endif %}</p>
+    </li>
+    <li>
+      <h2><a href="{% url 'export' %}">Export</a></h2>
+      <p>{{ stats.accepted }} accepted so far.</p>
+    </li>
+  </ol>
+  <p><a href="{% url 'gallery' %}">See the site as a visitor does</a></p>
 
   <h2>About this copy</h2>
   <dl class="facts">

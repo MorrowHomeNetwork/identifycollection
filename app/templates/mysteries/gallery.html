@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Do you know who this is? | IdentifyCollection{% endblock %}
+
+{% block content %}
+<section class="wall">
+  <h1>Do you know who this is?</h1>
+  <p class="lead">
+    These photographs belong to the museum, but the names of the people in
+    them have been lost. If you recognize someone, open the photograph and
+    tell us. Museum staff review every answer before it joins the record.
+  </p>
+
+  {% if page.object_list %}
+  <ul class="prints">
+    {% for mystery in page %}
+    <li>
+      <a class="print-card" href="{{ mystery.get_absolute_url }}">
+        <span class="print-card-image"><img src="{% url 'thumb_image' mystery.pk %}" alt="" loading="lazy"></span>
+        <span class="print-card-title">{{ mystery.display_title }}</span>
+        <span class="print-card-meta">{% if mystery.date_text %}{{ mystery.date_text }}. {% endif %}{% if mystery.named %}{{ mystery.named }} named so far{% else %}Nobody named yet{% endif %}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% if page.has_other_pages %}
+  <nav class="pager" aria-label="More photographs">
+    {% if page.has_previous %}<a class="button button-quiet" href="?page={{ page.previous_page_number }}">Earlier photographs</a>{% endif %}
+    <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a class="button button-quiet" href="?page={{ page.next_page_number }}">More photographs</a>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <div class="notice">
+    <p>No photographs are on show yet.{% if user.is_staff %} <a href="{% url 'photos' %}">Add some photographs</a> and put them on show.{% else %} Please come back soon.{% endif %}</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Thank you | IdentifyCollection{% endblock %}
+
+{% block content %}
+<article class="sheet">
+  <h1>Thank you. The museum has your answer.</h1>
+  <p class="lead">
+    You named <strong>{{ submission.person_name }}</strong> in
+    &ldquo;{{ submission.mystery.display_title }}&rdquo;. A member of the
+    museum's staff will review it. Nothing is shown publicly until they do.
+  </p>
+  <p>Your reference is <strong class="reference">{{ submission.reference }}</strong>. Quote it if you ever want to add to, correct or withdraw what you sent.</p>
+  <p>
+    <a class="button" href="{{ submission.mystery.get_absolute_url }}">Name someone else in this photograph</a>
+    <a class="button button-quiet" href="{% url 'gallery' %}">Look at other photographs</a>
+  </p>
+</article>
+{% endblock %}

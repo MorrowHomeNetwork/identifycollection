@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ item.reference }} | IdentifyCollection{% endblock %}
+
+{% block content %}
+<article class="desk">
+  <p class="trail"><a href="{% url 'queue' %}">Review</a></p>
+  <h1>{{ item.person_name }}</h1>
+  <p class="lead">
+    Proposed for &ldquo;<a href="{{ item.mystery.get_absolute_url }}">{{ item.mystery.display_title }}</a>&rdquo;.
+    <span class="badge badge-{{ item.status }}">{{ item.get_status_display }}</span>
+  </p>
+
+  <div class="split">
+    <div>
+      {% include "mysteries/_viewer.html" with mystery=item.mystery %}
+      <p class="field-help">{% if item.has_box %}The dashed box is where the contributor marked this person. Solid boxes are people already accepted.{% else %}The contributor did not mark the picture. They wrote: &ldquo;{{ item.position_note }}&rdquo;{% endif %}</p>
+    </div>
+
+    <div>
+      <dl class="facts">
+        <div><dt>Reference</dt><dd>{{ item.reference }}, sent {{ item.created_at|date:"j M Y, H:i" }} UTC</dd></div>
+        <div><dt>How sure</dt><dd>{{ item.get_confidence_display }}</dd></div>
+        {% if item.position_note %}<div><dt>Position</dt><dd>{{ item.position_note }}</dd></div>{% endif %}
+        {% for evidence in item.evidence.all %}
+        <div>
+          <dt>Evidence</dt>
+          <dd>
+            <strong>{{ evidence.get_kind_display }}</strong>
+            {% if evidence.text %}<p class="quoted">{{ evidence.text|linebreaksbr }}</p>{% endif %}
+            {% if evidence.file %}<p><a href="{% url 'evidence_file' evidence.pk %}">Download the attached file</a> ({{ evidence.file_name }})</p>{% endif %}
+            <p class="field-help">{% if evidence.rights_acknowledged %}Confirmed the right to share the file. {% endif %}{% if evidence.consent_given %}Agreed that the museum may keep this account.{% endif %}</p>
+          </dd>
+        </div>
+        {% endfor %}
+        <div>
+          <dt>Sent by</dt>
+          <dd>
+            {% if item.personal_data_removed_at %}Details removed on {{ item.personal_data_removed_at|date:"j M Y" }}.
+            {% elif item.contributor_name or item.contributor_contact %}{{ item.contributor_name|default:"No name given" }}{% if item.contributor_contact %}, {{ item.contributor_contact }}{% endif %}.
+            {% if item.contact_ok %}May be contacted. {% else %}Did not ask to be contacted. {% endif %}{% if item.credit_ok %}May be credited by name.{% else %}Not to be credited by name.{% endif %}
+            {% else %}Anonymous.{% endif %}
+          </dd>
+        </div>
+        {% if item.decided_at %}
+        <div><dt>Last decision</dt><dd>{{ item.get_status_display }} by {{ item.decided_by.get_username|default:"a former member of staff" }} on {{ item.decided_at|date:"j M Y, H:i" }} UTC{% if item.decision_note %}: {{ item.decision_note }}{% endif %}</dd></div>
+        {% endif %}
+      </dl>
+
+      <section class="card decide" aria-labelledby="decide-title">
+        <h2 id="decide-title">Your decision</h2>
+        {% if item.status == Status.PENDING %}
+        <form method="post">
+          {% csrf_token %}
+          <div class="field"><label class="field-label" for="note">Note for the record (optional)</label><textarea id="note" name="note" rows="2"></textarea></div>
+          <button class="button" name="action" value="accept">Accept into the record</button>
+          <button class="button button-quiet" name="action" value="reject">Decline</button>
+        </form>
+        {% elif item.status == Status.ACCEPTED %}
+        <p>This identification is in the record and shows on the photograph.</p>
+        <form method="post">
+          {% csrf_token %}
+          <div class="field"><label class="field-label" for="note">Why is it being withdrawn? (required)</label><textarea id="note" name="note" rows="2" required></textarea></div>
+          <button class="button button-danger" name="action" value="withdraw">Withdraw from the record</button>
+        </form>
+        {% else %}
+        <p>This is not in the record. You can still accept it; the history is kept either way.</p>
+        <form method="post">
+          {% csrf_token %}
+          <div class="field"><label class="field-label" for="note">Note for the record (optional)</label><textarea id="note" name="note" rows="2"></textarea></div>
+          <button class="button" name="action" value="accept">Accept into the record</button>
+        </form>
+        {% endif %}
+      </section>
+
+      {% if history %}
+      <h2>History</h2>
+      <ol class="history">
+        {% for what, when, who, why in history %}
+        <li><strong>{{ what }}</strong> on {{ when|date:"j M Y, H:i" }} UTC by {{ who.get_username|default:"a former member of staff" }}{% if why %}: {{ why }}{% endif %}</li>
+        {% endfor %}
+      </ol>
+      {% endif %}
+
+      {% if not item.personal_data_removed_at %}{% if item.contributor_name or item.contributor_contact %}
+      <details class="privacy">
+        <summary>Remove the contributor's personal details</summary>
+        <p>Use this when the person who sent this asks for it. Their name and contact details are erased for good. The identification itself stays.</p>
+        <form method="post">
+          {% csrf_token %}
+          <label class="choice"><input type="checkbox" name="confirm" value="yes"> <span>Yes, erase their name and contact details.</span></label>
+          <p><button class="button button-danger" name="action" value="remove_personal_data">Remove their details</button></p>
+        </form>
+      </details>
+      {% endif %}{% endif %}
+    </div>
+  </div>
+</article>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'vendor/openseadragon/openseadragon.min.js' %}"></script>
+<script src="{% static 'js/viewer.js' %}"></script>
+{% endblock %}

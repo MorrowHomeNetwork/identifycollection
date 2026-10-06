@@ -21,6 +21,7 @@ is either stored in this repository or placed inside the zip when it is built.
 | tzdata | 2026.4 | The world's time-zone rules (Windows has no copy Python can use) | Apache-2.0 | `runtime/Lib/site-packages/tzdata-2026.4.dist-info/licenses/` |
 | waitress | 3.0.2 | The small web server inside the portable build | ZPL-2.1 (Zope Public License) | `runtime/Lib/site-packages/waitress-3.0.2.dist-info/LICENSE.txt` |
 | WhiteNoise | 6.12.0 | Serves the stylesheet, fonts and images | MIT | `runtime/Lib/site-packages/whitenoise-6.12.0.dist-info/licenses/` |
+| Pillow | 12.3.0 | Reads scans (JPEG, TIFF, PNG) and makes the pictures shown in the browser | MIT-CMU. It includes the image libraries it is built on (among them libjpeg-turbo, libtiff, zlib, libpng and libwebp), each under its own permissive licence | `runtime/Lib/site-packages/pillow-12.3.0.dist-info/licenses/` |
 
 The Python runtime is itself assembled from other open-source components.
 Their licence texts and copyright notices travel in the zip in two files:
@@ -47,11 +48,12 @@ The exact versions and checksums of the Python packages are recorded in
 
 | Component | Version | Where | Licence | Copyright |
 |---|---|---|---|---|
+| OpenSeadragon | 6.1.1 | `app/static/vendor/openseadragon/` | BSD-3-Clause (`LICENSE.txt` alongside) | Copyright (C) 2009 CodePlex Foundation; Copyright (C) 2010-2025 OpenSeadragon contributors |
 | Besley (typeface, variable, Latin and Latin Extended subsets) | as packaged by Fontsource 5.3.0 | `app/static/fonts/besley/` | SIL Open Font License 1.1 (`OFL.txt` alongside) | Copyright 2020 The Besley Project Authors (https://github.com/indestructible-type) |
 | Atkinson Hyperlegible Next (typeface, variable, Latin and Latin Extended subsets) | as packaged by Fontsource 5.3.0 | `app/static/fonts/atkinson-hyperlegible-next/` | SIL Open Font License 1.1 (`OFL.txt` alongside) | Copyright 2020-2024 The Atkinson Hyperlegible Next Project Authors (https://github.com/googlefonts/atkinson-hyperlegible-next) |
 
 ## Keeping this file honest
 
 When a dependency is added, removed or upgraded, this file is updated in the
-same commit. Libraries planned for later phases (OpenSeadragon, Annotorious,
-libvips) are not listed because they are not included yet.
+same commit. Libraries considered for later phases (Annotorious, libvips) are not listed
+because they are not included.

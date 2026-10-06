@@ -23,7 +23,7 @@ class FirstRunSetupTests(TestCase):
         response = self.client.get("/", follow=True)
         self.assertEqual(
             [url for url, _status in response.redirect_chain],
-            ["/login/?next=/", "/setup/"],
+["/setup/"],
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Create the first staff account")
@@ -101,7 +101,7 @@ class FirstRunSetupTests(TestCase):
 class SignInTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = User.objects.create_user("registrar", password=GOOD_PASSWORD)
+        cls.user = User.objects.create_user("registrar", password=GOOD_PASSWORD, is_staff=True)
 
     def test_sign_in_page_is_shown(self):
         response = self.client.get(reverse("login"))
@@ -143,7 +143,7 @@ class SignInTests(TestCase):
         response = self.client.post(reverse("logout"))
         self.assertRedirects(response, reverse("login"))
         after = self.client.get(reverse("home"))
-        self.assertRedirects(after, "/login/?next=/")
+        self.assertRedirects(after, "/login/?next=/staff/")
 
     def test_sign_out_cannot_be_triggered_by_a_mere_link(self):
         # Signing out must be a deliberate button press (a "POST"), so that a

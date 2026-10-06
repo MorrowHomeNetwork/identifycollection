@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Edit details | IdentifyCollection{% endblock %}
+
+{% block content %}
+<article class="sheet">
+  <p class="trail"><a href="{% url 'photos' %}">Photographs</a></p>
+  <h1>Details for this photograph</h1>
+  <p><img class="edit-image" src="{% url 'thumb_image' mystery.pk %}" alt=""></p>
+  <p class="field-help">Scan: {{ mystery.original_name }}. {{ mystery.get_status_display }}.</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}{% include "includes/field.html" with field=field %}{% endfor %}
+    <button class="button" type="submit">Save</button>
+  </form>
+</article>
+{% endblock %}

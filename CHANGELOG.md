@@ -7,13 +7,49 @@ Version numbers: `0.0.x` are scaffolding and test drops. `0.1.0` will be the
 first build a museum can do real work with (phase 1). The text under each
 version heading becomes the description of that version's GitHub Release.
 
-## [Unreleased]
+## [0.0.2] - 2026-10-06
 
-- For people running the code on a server or a virtual machine: the setting
-  `IDENTIFYCOLLECTION_EXTRA_HOSTS` lists the extra names or addresses the app
-  should answer on, so it can be opened from other computers on the same
-  network. The portable Windows build is unchanged and still answers only on
-  the computer it runs on.
+The first build that does the real work, start to finish. Catalog import is
+still to come; everything else in the loop is here to try.
+
+### What you can do now
+
+- **Add photographs.** Choose scans, or a whole folder of them, from your
+  computer. JPEG, TIFF (including 16-bit archival scans) and PNG all work.
+  Nothing is shown to visitors until you put it on show.
+- **Show them.** Visitors see a gallery of the photographs on show and can
+  zoom right into each one. They do not need an account.
+- **Collect answers.** A visitor marks a face by dragging a box around it,
+  says who it is and how sure they are, and gives one piece of evidence:
+  their own knowledge, an attached document or photograph, or a pointer to
+  another record. They agree to the museum keeping it, and may leave their
+  name and contact details or stay anonymous.
+- **Review.** Each answer waits in a review list. Accept it and the name
+  appears on the photograph; decline it and nothing becomes public. An
+  accepted name can be withdrawn later, with a reason, and reinstated; the
+  history of every decision is kept. A contributor's personal details can be
+  erased on request without losing the identification.
+- **Export.** Download one spreadsheet (CSV) of everything accepted, and
+  everything later withdrawn, with the marked area given in pixels of your
+  original scan.
+- **Practise first.** One button adds six made-up practice photographs, and
+  one removes them and everything sent in about them.
+
+### Good to know
+
+- Your original scan files are not copied into IdentifyCollection. It keeps
+  a zoomable JPEG (up to 4000 pixels on the long side) and the original's
+  file name, size and fingerprint.
+- For people running the code on a server or virtual machine: the setting
+  `IDENTIFYCOLLECTION_EXTRA_HOSTS` lists extra addresses the app answers on.
+  The portable Windows build is unchanged and answers only on its own
+  computer.
+
+### Not built yet
+
+- Importing a catalog file (PastPerfect or CSV). For now, the object ID,
+  title and date of each photograph are typed in by hand.
+- A "forgot my password" button.
 
 ## [0.0.1] - 2026-10-01
 

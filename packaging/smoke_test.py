@@ -11,6 +11,8 @@ fire. This one does what a museum would do, with no shortcuts:
      an ampersand, an accented letter), because real folders have such names;
   2. starts it through "Start IdentifyCollection.bat";
   3. opens the pages, creates the first staff account, signs out, signs in;
+     then adds a scan, puts it on show, identifies someone as a visitor,
+     accepts the answer as staff and downloads the export;
   4. checks the stylesheet and a font arrive, and that no page loads anything
      from the internet;
   5. starts it a second time and checks the second copy steps aside;
@@ -22,9 +24,9 @@ How the zip is started depends on the computer running the test:
             build on every change. This is the result that counts.
   wine      on Linux, runs the same Windows programs through Wine, a
             compatibility layer. A good rehearsal, not proof.
-  host      runs the app with this computer's own Python instead of the
-            bundled Windows one. Checks the app and its files, not the
-            Windows runtime or the batch file.
+  host      runs the app with this computer's own Python and its installed
+            packages instead of the bundled Windows ones. Checks the app
+            and its files, not the Windows runtime or the batch file.
 
 It uses only Python's standard library.
 """
@@ -37,6 +39,7 @@ import json
 import os
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -45,7 +48,9 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import uuid
 import zipfile
+import zlib
 from pathlib import Path
 
 BAT_NAME = "Start IdentifyCollection.bat"
@@ -102,6 +107,28 @@ class Browser:
         status, final_url, body, _headers = self.request(path)
         return status, urllib.parse.urlsplit(final_url).path, body.decode("utf-8")
 
+    def post_files(self, path: str, fields: dict, files: dict, page_with_form: str, headers: dict | None = None):
+        """Send a form that carries files, the way a browser's file chooser does."""
+        token = re.search(r'name="csrfmiddlewaretoken" value="([^"]+)"', page_with_form)
+        expect(token is not None, f"no form security token found on the page before posting to {path}")
+        boundary = uuid.uuid4().hex
+        parts = []
+        for name, value in {**fields, "csrfmiddlewaretoken": token.group(1)}.items():
+            parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'.encode())
+        for name, (filename, content, kind) in files.items():
+            head = f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"; filename="{filename}"\r\nContent-Type: {kind}\r\n\r\n'
+            parts.append(head.encode() + content + b"\r\n")
+        body = b"".join(parts) + f"--{boundary}--\r\n".encode()
+        url = urllib.parse.urljoin(self.base_url, path)
+        request = urllib.request.Request(
+            url, data=body, headers={"Content-Type": f"multipart/form-data; boundary={boundary}", "Referer": url, **(headers or {})}
+        )
+        try:
+            with self.opener.open(request, timeout=120) as response:
+                return response.status, urllib.parse.urlsplit(response.geturl()).path, response.read()
+        except urllib.error.HTTPError as error:
+            return error.code, urllib.parse.urlsplit(error.geturl()).path, error.read()
+
     def post(self, path: str, form: dict, page_with_form: str) -> tuple[int, str, str]:
         token = re.search(r'name="csrfmiddlewaretoken" value="([^"]+)"', page_with_form)
         expect(token is not None, f"no form security token found on the page before posting to {path}")
@@ -152,8 +179,10 @@ class Runner:
             self.env.setdefault("WINEPREFIX", str(workspace / "wineprefix"))
             self.env.setdefault("LC_ALL", "C.UTF-8")
         if kind == "host":
-            # Borrow the packages that were installed into the bundle.
-            self.env["PYTHONPATH"] = str(bundle / "runtime" / "Lib" / "site-packages")
+            # Uses the packages already installed for this computer's own Python
+            # (pip install -r requirements.txt). The ones inside the bundle are
+            # built for Windows and cannot be borrowed elsewhere.
+            self.env.pop("PYTHONPATH", None)
             self.env["PYTHONDONTWRITEBYTECODE"] = "1"
 
     def command(self, arguments: list[str]):
@@ -229,6 +258,9 @@ def wait_until_running(bundle: Path, process: subprocess.Popen, log_path: Path) 
                 if status == 200 and json.loads(body).get("instance") == info["instance"]:
                     info["seconds_to_start"] = round(time.monotonic() - started, 1)
                     return info
+                if status >= 500:
+                    app_log = read_log(bundle / "data" / "logs" / "identifycollection.log")
+                    raise SmokeFailure(f"the app started but answers with an error ({status}). Its log ends:\n{app_log[-3000:]}")
             except (OSError, ValueError, KeyError):
                 pass  # not ready yet
         time.sleep(0.25)
@@ -274,7 +306,7 @@ def first_run_journey(base_url: str, expected_version: str) -> None:
     status, path, page = browser.post(
         "setup/", {"username": USERNAME, "password1": PASSWORD, "password2": PASSWORD}, page
     )
-    expect(status == 200 and path == "/", f"creating the first account should land on the home page, got {status} at {path}")
+    expect(status == 200 and path == "/staff/", f"creating the first account should land on the staff home page, got {status} at {path}")
     expect(f"Signed in as {USERNAME}" in page, "the home page does not show who is signed in")
     expect("portable build" in page, "the home page should say this is the portable build")
     expect(not EXTERNAL_LOAD.search(page), "the home page loads something from the internet")
@@ -291,21 +323,107 @@ def first_run_journey(base_url: str, expected_version: str) -> None:
     status, path, wrong = browser.post("login/", {"username": USERNAME, "password": "not the password"}, page)
     expect(status == 200 and path == "/login/" and "do not match an account here" in wrong, "a wrong password was not refused properly")
     status, path, home = browser.post("login/", {"username": USERNAME, "password": PASSWORD}, wrong)
-    expect(status == 200 and path == "/" and f"Signed in as {USERNAME}" in home, f"signing in failed: {status} at {path}")
+    expect(status == 200 and path == "/staff/" and f"Signed in as {USERNAME}" in home, f"signing in failed: {status} at {path}")
     note("wrong password refused; right password signs in")
 
     status, _path, missing = browser.get("no-such-page/")
     expect(status == 404 and "There is no page at this address" in missing, "the 'page not found' page is not ours")
     note("unknown addresses get the plain 'not found' page")
 
+    collection_journey(browser, base_url)
+
+
+def practice_scan(width: int = 900, height: int = 600) -> bytes:
+    """A small greyscale PNG picture, built by hand so this test needs nothing but Python itself."""
+
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+
+    rows = b"".join(b"\x00" + bytes((x * 200 // width + y // 8) % 256 for x in range(width)) for y in range(height))
+    header = struct.pack(">IIBBBBB", width, height, 8, 0, 0, 0, 0)
+    return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", zlib.compress(rows)) + chunk(b"IEND", b"")
+
+
+def collection_journey(staff: Browser, base_url: str) -> None:
+    """The whole point of the project, end to end: scan in, answer in, decision made, export out."""
+    visitor = Browser(base_url)  # a second browser with no sign-in, as a member of the public
+
+    _status, _path, photos_page = staff.get("staff/photos/")
+    status, _path, body = staff.post_files(
+        "staff/photos/upload/", {}, {"file": ("1987.12.4.png", practice_scan(), "image/png")}, photos_page,
+        headers={"X-Requested-With": "fetch"},
+    )  # fmt: skip
+    expect(status == 200, f"adding a photograph failed with status {status}: {body[:300]!r}")
+    result = json.loads(body)["results"][0]
+    expect(result["ok"], f"the practice scan was refused: {result}")
+    photo = result["id"]
+    note("a scan was added and turned into browser pictures")
+
+    status, _path, private = visitor.get(f"photo/{photo}/")
+    expect(status == 404, f"a photograph must be hidden from visitors until staff put it on show (got {status})")
+    status, path, _page = staff.post("staff/photos/", {"action": "publish", "photo": photo}, photos_page)
+    expect(status == 200 and path == "/staff/photos/", f"putting the photograph on show failed: {status} at {path}")
+
+    status, _path, wall = visitor.get("")
+    expect(status == 200 and f"/photo/{photo}/" in wall, "the photograph is not on the public gallery after being put on show")
+    status, _url, picture, headers = visitor.request(f"media/web/{photo}.jpg")
+    expect(status == 200 and picture[:2] == b"\xff\xd8", "the zoomable picture is not a JPEG made from the scan")
+    status, _url, thumb, _headers = visitor.request(f"media/thumb/{photo}.jpg")
+    expect(status == 200 and thumb[:2] == b"\xff\xd8", "the gallery thumbnail was not made")
+    note("hidden until put on show; then on the public gallery with its pictures")
+
+    status, _path, page = visitor.get(f"photo/{photo}/")
+    expect(status == 200 and "Tell the museum who you recognize" in page, "the photograph page has no answer form")
+    expect(not EXTERNAL_LOAD.search(page), "the photograph page loads something from the internet")
+    for script in re.findall(r'<script src="([^"]+)"', page):
+        status, _url, code, _headers = visitor.request(script)
+        expect(status == 200 and len(code) > 200, f"a script the page needs was not served: {script}")
+    expect("openseadragon" in page, "the zooming viewer is missing from the photograph page")
+
+    status, path, thanks = visitor.post(
+        f"photo/{photo}/",
+        {
+            "person_name": "Edith Marlow", "confidence": "certain",
+            "box_x": "0.25", "box_y": "0.2", "box_w": "0.1", "box_h": "0.2",
+            "evidence_kind": "testimony", "evidence_text": "She was my grandmother.", "consent": "on",
+        },
+        page,
+    )  # fmt: skip
+    expect(status == 200 and path.startswith("/thanks/IC-"), f"sending an answer failed: {status} at {path}")
+    reference = path.strip("/").split("/")[-1]
+    _status, _path, page = visitor.get(f"photo/{photo}/")
+    expect("Edith Marlow" not in page, "an answer became public before any member of staff reviewed it")
+    note(f"a visitor identified someone with evidence, without an account ({reference})")
+
+    status, _path, review = staff.get(f"staff/review/{reference}/")
+    expect(status == 200 and "She was my grandmother." in review, "staff cannot see the answer and its evidence")
+    status, path, _page = staff.post(f"staff/review/{reference}/", {"action": "accept", "note": "smoke test"}, review)
+    expect(status == 200 and path == "/staff/review/", f"accepting failed: {status} at {path}")
+    _status, _path, page = visitor.get(f"photo/{photo}/")
+    expect("Edith Marlow" in page, "an accepted name does not show on the public photograph page")
+    note("staff accepted it; the name now shows publicly")
+
+    status, _url, export, headers = staff.request("staff/export/identifications.csv")
+    text = export.decode("utf-8")
+    expect(status == 200 and "attachment" in headers.get("Content-Disposition", ""), "the export did not arrive as a file")
+    expect("Edith Marlow" in text and "1987.12.4.png" in text and "xywh=pixel:225,120,90,120" in text, f"the export is incomplete:\n{text}")
+    status, _url, _body, _headers = visitor.request("staff/export/identifications.csv")
+    expect("/login/" in _url, "the export must not be open to visitors")
+    note("the export file holds the identification, with the marked area in pixels")
+
 
 def returning_journey(base_url: str) -> None:
     browser = Browser(base_url)
-    status, path, page = browser.get("")
-    expect(status == 200 and path == "/login/", f"after a restart the app should ask to sign in, got {status} at {path}")
+    status, path, page = browser.get("staff/")
+    expect(status == 200 and path == "/login/", f"after a restart the staff pages should ask to sign in, got {status} at {path}")
     status, path, home = browser.post("login/", {"username": USERNAME, "password": PASSWORD}, page)
-    expect(status == 200 and path == "/" and f"Signed in as {USERNAME}" in home, "the account did not survive a restart")
-    note("after a restart the account is still there")
+    expect(status == 200 and path == "/staff/" and f"Signed in as {USERNAME}" in home, "the account did not survive a restart")
+    _status, _path, wall = Browser(base_url).get("")
+    link = re.search(r'href="(/photo/\d+/)"', wall)
+    expect(link is not None, "the photograph did not survive a restart")
+    _status, _path, page = Browser(base_url).get(link.group(1).lstrip("/"))
+    expect("Edith Marlow" in page, "the accepted identification did not survive a restart")
+    note("after a restart the account, the photograph and the identification are still there")
 
 
 def run(zip_path: Path, kind: str, keep: bool) -> None:
@@ -350,7 +468,9 @@ def run(zip_path: Path, kind: str, keep: bool) -> None:
         expect("Serving on" in log_text, "the log file does not record the start-up")
         expect("Traceback" not in log_text, f"the log file records an error:\n{log_text}")
         expect(not (data / "backups").exists(), "a first start has nothing to back up, yet a backup was made")
-        note("database, secret key and log file are inside the bundle's data folder")
+        expect(any((data / "media" / "web").rglob("*.jpg")), "the pictures are not kept inside the data folder")
+        expect(not any((data / "tmp").glob("*")), "upload scratch files were left behind in data/tmp")
+        note("database, pictures, secret key and log file are inside the bundle's data folder")
 
         # --- a second double-click while it is running ----------------------
         second, second_log = runner.start()
